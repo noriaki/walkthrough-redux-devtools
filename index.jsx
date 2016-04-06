@@ -3,6 +3,20 @@ import ReactDOM from 'react-dom';
 import { createStore } from 'redux';
 import { Provider, connect } from 'react-redux';
 
+// Redux DevTools
+import { createDevTools } from 'redux-devtools';
+import LogMonitor from 'redux-devtools-log-monitor';
+import DockMonitor from 'redux-devtools-dock-monitor';
+
+const DevTools = createDevTools(
+  <DockMonitor toggleVisibilityKey='ctrl-i'
+               changePositionKey='ctrl-q'
+               defaultIsVisible={true}>
+    <LogMonitor theme='tomorrow' />
+  </DockMonitor>
+);
+
+// Component
 class Counter extends React.Component {
   propTypes: {
     count:       React.PropTypes.number.isRequired,
@@ -43,7 +57,7 @@ function counterReducer(state = { count: 0 }, action) {
 }
 
 // Store
-const store = createStore(counterReducer);
+const store = createStore(counterReducer, DevTools.instrument());
 
 function mapStateToProps(state) {
   return { count: state.count };
@@ -63,7 +77,10 @@ let App = connect(
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <div>
+      <App />
+      <DevTools />
+    </div>
   </Provider>,
   document.getElementById('root')
 );
